@@ -1,0 +1,8 @@
+{
+  "projectId": "ffc599ca-9ff8-426c-b2b2-71916c665651",
+  "createdAt": 1741392000,
+  "startupCommands": [
+    "bun install --cwd ./client; bun install --cwd ./server; bun run --cwd ./server dev",
+    "bun run --cwd ./client dev"
+  ]
+}

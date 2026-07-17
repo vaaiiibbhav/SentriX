@@ -32,7 +32,7 @@ Each agent follows the same execution pattern:
 
 1. Receive accumulated pipeline context
 2. Attempt execution via OmniAgent module (if configured)
-3. Fall back to Groq Cloud API with expert prompt
+3. Fall back to the Anthropic Claude API with expert prompt (`claude-sonnet-5`; `claude-fable-5` for remediation planning and policy generation)
 4. Fall back to local intelligence algorithm
 5. Return structured output in a standardized schema
 6. Emit progress events via SSE to the connected client

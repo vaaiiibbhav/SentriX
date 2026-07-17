@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldAlert } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
@@ -51,10 +51,9 @@ export default function RiskIntelligence() {
     };
   });
 
-  const topExposure = useMemo(
-    () => [...currentAssessment.standards].sort((left, right) => left.overallScore - right.overallScore)[0],
-    [currentAssessment]
-  );
+  // Plain derivation (not useMemo): this sits below an early return, and a
+  // conditional hook crashes React when the assessment loads while mounted.
+  const topExposure = [...currentAssessment.standards].sort((left, right) => left.overallScore - right.overallScore)[0];
 
   return (
     <div className="page-stack">

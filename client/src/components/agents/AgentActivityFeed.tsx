@@ -2,13 +2,13 @@ import { motion } from 'framer-motion';
 import { Search, Bot, ShieldCheck, GitBranch, Wrench, Clock, ScrollText } from 'lucide-react';
 
 const feedItems = [
-  { agent: 'Surface Parsing Agent', icon: Search, message: 'Structured 42 target asset sections and extracted attack surface signals from ingested OSINT seeds', time: '2 min ago', color: '#00ABBD' },
-  { agent: 'OSINT Mapping Agent', icon: Bot, message: 'Mapped subdomain enumeration and leaked credential signals to high-relevance CVE entries with semantic matches', time: '4 min ago', color: '#0076A8' },
-  { agent: 'Evidence Validation Agent', icon: ShieldCheck, message: 'Classified signal quality and flagged unconfirmed exploits as indirect or missing evidence', time: '6 min ago', color: '#86BC25' },
-  { agent: 'Exposure Scoring Agent', icon: Bot, message: 'Calculated vulnerability exposure and confidence levels across the scanned attack surface', time: '8 min ago', color: '#DD6B20' },
-  { agent: 'Gap Detection Agent', icon: GitBranch, message: 'Identified unpatched CVEs and misconfigured controls across the mapped exposure surface', time: '10 min ago', color: '#E53E3E' },
+  { agent: 'Document Parsing Agent', icon: Search, message: 'Structured 42 policy sections and extracted compliance controls from the uploaded document pack', time: '2 min ago', color: '#00ABBD' },
+  { agent: 'Clause Mapping Agent', icon: Bot, message: 'Mapped document sections to high-relevance ISO clauses across the selected standards with semantic matches', time: '4 min ago', color: '#0076A8' },
+  { agent: 'Evidence Validation Agent', icon: ShieldCheck, message: 'Classified evidence quality and flagged unapproved drafts as indirect or missing evidence', time: '6 min ago', color: '#86BC25' },
+  { agent: 'Compliance Scoring Agent', icon: Bot, message: 'Calculated clause-level readiness scores and confidence levels across the assessed standards', time: '8 min ago', color: '#DD6B20' },
+  { agent: 'Gap Detection Agent', icon: GitBranch, message: 'Identified unmet mandatory requirements and undocumented controls across the mapped clauses', time: '10 min ago', color: '#E53E3E' },
   { agent: 'Remediation Planning Agent', icon: Wrench, message: 'Generated a prioritized remediation roadmap with phases, owners, and effort signals', time: '12 min ago', color: '#A8D048' },
-  { agent: 'Policy Hardening Agent', icon: ScrollText, message: 'Drafted hardened control configurations to close the highest-priority attack surface gaps', time: '14 min ago', color: '#70563C' },
+  { agent: 'Policy Generation Agent', icon: ScrollText, message: 'Drafted compliant policy documents to close the highest-priority clause gaps', time: '14 min ago', color: '#70563C' },
 ];
 
 export default function AgentActivityFeed() {

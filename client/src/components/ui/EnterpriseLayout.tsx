@@ -1,5 +1,16 @@
 import type { ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+
+const heroContainer = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
+};
+
+const heroItem = {
+  hidden: { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
+};
 
 export function PageHero({
   eyebrow,
@@ -15,15 +26,24 @@ export function PageHero({
   aside?: ReactNode;
 }) {
   return (
-    <section className="enterprise-hero">
+    <motion.section className="enterprise-hero" variants={heroContainer} initial="hidden" animate="visible">
       <div>
-        <span className="section-label">{eyebrow}</span>
-        <h1 className="enterprise-hero-title">{title}</h1>
-        <p className="enterprise-hero-copy">{description}</p>
-        {actions ? <div className="enterprise-hero-actions">{actions}</div> : null}
+        <motion.span className="section-label" variants={heroItem}>{eyebrow}</motion.span>
+        <motion.h1 className="enterprise-hero-title" variants={heroItem}>{title}</motion.h1>
+        <motion.p className="enterprise-hero-copy" variants={heroItem}>{description}</motion.p>
+        {actions ? <motion.div className="enterprise-hero-actions" variants={heroItem}>{actions}</motion.div> : null}
       </div>
-      {aside ? <div className="enterprise-hero-aside">{aside}</div> : null}
-    </section>
+      {aside ? (
+        <motion.div
+          className="enterprise-hero-aside"
+          initial={{ opacity: 0, x: 14 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {aside}
+        </motion.div>
+      ) : null}
+    </motion.section>
   );
 }
 
@@ -39,11 +59,17 @@ export function MetricCard({
   tone?: 'default' | 'brand' | 'success' | 'warn' | 'danger';
 }) {
   return (
-    <div className={`metric-card metric-card-${tone}`}>
+    <motion.div
+      className={`metric-card metric-card-${tone}`}
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4 }}
+      transition={{ type: 'spring', stiffness: 320, damping: 24 }}
+    >
       <div className="metric-card-label">{label}</div>
       <div className="metric-card-value score-display">{value}</div>
       <div className="metric-card-caption">{caption}</div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -61,7 +87,13 @@ export function Panel({
   children: ReactNode;
 }) {
   return (
-    <section className="card analytics-panel">
+    <motion.section
+      className="card analytics-panel"
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '0px 0px -40px 0px' }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+    >
       <div className="card-header">
         <div>
           <span className="section-label">{label}</span>
@@ -71,7 +103,7 @@ export function Panel({
         {action}
       </div>
       <div className="card-body analytics-panel-body">{children}</div>
-    </section>
+    </motion.section>
   );
 }
 
@@ -85,13 +117,23 @@ export function EmptyWorkspace({
   action?: ReactNode;
 }) {
   return (
-    <div className="empty-workspace">
-      <div className="empty-workspace-mark">
+    <motion.div
+      className="empty-workspace"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.div
+        className="empty-workspace-mark"
+        initial={{ scale: 0.7, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.1 }}
+      >
         <ArrowRight size={18} />
-      </div>
+      </motion.div>
       <div className="empty-workspace-title">{title}</div>
       <div className="empty-workspace-copy">{description}</div>
       {action ? <div className="enterprise-hero-actions">{action}</div> : null}
-    </div>
+    </motion.div>
   );
 }

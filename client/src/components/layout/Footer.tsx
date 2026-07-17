@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="public-footer-brand-column">
           <BrandLogo showProductTag className="public-footer-brand" />
           <p className="public-footer-description">
-            AI-powered threat intelligence platform for OSINT reconnaissance and multi-agent vulnerability diagnostics.
+            Agentic AI compliance platform for multi-standard ISO readiness, gap analysis, and remediation intelligence.
           </p>
         </div>
 
@@ -60,13 +60,13 @@ export default function Footer() {
           <div className="public-footer-badges">
             <div className="public-footer-badge genw">
               <ShieldCheck size={14} />
-              <span>Built with OmniAgent</span>
+              <span>Claude 5th-Gen Agentic Engine</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="public-footer-bottom">© 2026 SentriX — Vaibhav Verma</div>
+      <div className="public-footer-bottom">© 2026 SentriX — Engineered by Vaibhav Verma · Powered by Claude Sonnet 5 &amp; Claude Fable 5</div>
     </footer>
   );
 }

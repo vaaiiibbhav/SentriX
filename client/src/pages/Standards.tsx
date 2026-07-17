@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import type { KnowledgeBaseOverview, QuestionnaireResponse, StandardCode, StandardLibraryItem } from '../types';
 import { useAppStore } from '../store/useAppStore';
 import { standardsApi } from '../utils/apiClient';
 import { EmptyWorkspace, MetricCard, PageHero, Panel } from '../components/ui/EnterpriseLayout';
 import { ClauseStatusTag, DataTable, RiskIndicator, ScoreBadge } from '../components/ui/EnterpriseComponents';
-import { getStandardLabel, getStandardStatus, standardColors } from '../utils/enterpriseData';
+import { getStandardLabel, standardColors } from '../utils/enterpriseData';
 
 const supportedStandards: StandardCode[] = ['ISO37001', 'ISO37301', 'ISO27001', 'ISO9001'];
 
@@ -44,7 +44,7 @@ export default function Standards() {
     };
   }, []);
 
-  const loadStandardDetails = () => {
+  const loadStandardDetails = useCallback(() => {
     setDetailLoading(true);
     setDetailError(null);
 
@@ -66,11 +66,11 @@ export default function Standards() {
       .finally(() => {
         setDetailLoading(false);
       });
-  };
+  }, [selected, industry]);
 
   useEffect(() => {
     loadStandardDetails();
-  }, [selected, industry]);
+  }, [loadStandardDetails]);
 
   const selectedLibrary = library.find((item) => item.code === selected);
   const standardOverlay = currentAssessment?.standards.find((standard) => standard.standardCode === selected);

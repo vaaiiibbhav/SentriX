@@ -161,10 +161,10 @@ function buildDynamicActionPrompts(
 ) {
   if (!currentAssessment) {
     return [
-      'What assets should I connect first for a useful attack surface scan?',
-      'How does SentriX Copilot use scan context?',
+      'What documents should I upload first for a useful assessment?',
+      'How does SentriX Copilot use assessment context?',
       'What kinds of remediation guidance can you generate?',
-      'Generate a breach-readiness briefing template for a first scan.',
+      'Generate an audit-readiness briefing template for a first assessment.',
     ];
   }
 
@@ -869,7 +869,7 @@ export default function ChatAssistant() {
                 </div>
                 <div className="copilot-panel-title-group">
                   <div className="copilot-panel-title">SentriX Copilot</div>
-                  <div className="copilot-panel-subtitle">AI guidance grounded in your current threat intelligence scan</div>
+                  <div className="copilot-panel-subtitle">Claude-powered guidance grounded in your current assessment</div>
                 </div>
               </div>
 

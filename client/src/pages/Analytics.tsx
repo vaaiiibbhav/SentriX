@@ -5,7 +5,7 @@ import {
   LineChart, Line, Legend, PieChart, Pie, Cell,
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle, ArrowRight, Scale, TrendingUp } from 'lucide-react';
+import { AlertTriangle, Scale, TrendingUp } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import type { AssessmentResult, KnowledgeBaseOverview } from '../types';
 import { standardsApi } from '../utils/apiClient';
@@ -32,8 +32,18 @@ const gapColors: Record<string, string> = {
   policy: 'var(--risk-critical)',
 };
 
-const renderGapLabel = (props: any) => {
-  const { cx, cy, midAngle, innerRadius, outerRadius, percent, name } = props;
+interface GapLabelProps {
+  cx: number;
+  cy: number;
+  midAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  percent?: number;
+  name?: string;
+}
+
+const renderGapLabel = (props: unknown) => {
+  const { cx, cy, midAngle, innerRadius, outerRadius, percent, name } = props as GapLabelProps;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.62;
   const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
   const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));

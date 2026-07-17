@@ -6,13 +6,13 @@ interface SSEEvent {
   agent?: string;
   message?: string;
   error?: string;
-  result?: any;
+  result?: unknown;
   assessmentId?: string;
   timestamp?: string;
 }
 
 type OnEvent = (event: SSEEvent) => void;
-type OnComplete = (result: any, assessmentId?: string) => void;
+type OnComplete = (result: unknown, assessmentId?: string) => void;
 type OnError = (error: string) => void;
 
 export function useAssessmentStream() {

@@ -33,23 +33,23 @@ export const navigationSections: NavigationSection[] = [
   {
     label: 'Workspace',
     items: [
-      { path: '/dashboard', label: 'Dashboard', description: 'Executive posture and exposure summary', icon: LayoutDashboard },
-      { path: '/assessment', label: 'Scan Pipeline', description: 'Run AI-led multi-agent vulnerability scans', icon: ClipboardCheck },
+      { path: '/dashboard', label: 'Dashboard', description: 'Executive posture and readiness summary', icon: LayoutDashboard },
+      { path: '/assessment', label: 'Assessment Pipeline', description: 'Run AI-led multi-agent compliance assessments', icon: ClipboardCheck },
     ],
   },
   {
     label: 'Intelligence',
     items: [
-      { path: '/standards', label: 'Threat Modules', description: 'Scan modules, OSINT pipelines, and recon overlays', icon: BookOpen },
-      { path: '/control-library', label: 'Control Library', description: 'Defensive controls mapped to vulnerability surface', icon: ShieldCheck },
+      { path: '/standards', label: 'Standards', description: 'ISO clause libraries, questionnaires, and audit overlays', icon: BookOpen },
+      { path: '/control-library', label: 'Control Library', description: 'Compliance controls mapped to clause requirements', icon: ShieldCheck },
     ],
   },
   {
     label: 'Analysis',
     items: [
-      { path: '/analytics', label: 'Analytics', description: 'Trends, heatmaps, and portfolio exposure analytics', icon: BarChart3 },
-      { path: '/risk-intelligence', label: 'Risk Intelligence', description: 'Benchmarking, top CVEs, and threat pressure indicators', icon: Siren },
-      { path: '/knowledge-base', label: 'Knowledge Base', description: 'Threat frameworks, maturity models, and attack crosswalks', icon: LibraryBig },
+      { path: '/analytics', label: 'Analytics', description: 'Trends, heatmaps, and portfolio readiness analytics', icon: BarChart3 },
+      { path: '/risk-intelligence', label: 'Risk Intelligence', description: 'Benchmarking, top gaps, and regulatory pressure indicators', icon: Siren },
+      { path: '/knowledge-base', label: 'Knowledge Base', description: 'Standards frameworks, maturity models, and clause crosswalks', icon: LibraryBig },
     ],
   },
   {
@@ -68,17 +68,17 @@ export const utilityNavigationItems: NavigationItem[] = [
 ];
 
 export const quickAccessItems: NavigationItem[] = [
-  { path: '/dashboard', label: 'Platform', description: 'Launch the enterprise threat intelligence workspace', icon: PanelsTopLeft },
-  { path: '/assessment', label: 'New Scan', description: 'Start a guided multi-agent vulnerability scan', icon: Command },
-  { path: '/knowledge-base', label: 'Knowledge Base', description: 'Explore threat intelligence and attack crosswalks', icon: LibraryBig },
+  { path: '/dashboard', label: 'Platform', description: 'Launch the enterprise compliance intelligence workspace', icon: PanelsTopLeft },
+  { path: '/assessment', label: 'New Assessment', description: 'Start a guided multi-agent compliance assessment', icon: Command },
+  { path: '/knowledge-base', label: 'Knowledge Base', description: 'Explore standards intelligence and clause crosswalks', icon: LibraryBig },
   { path: '/reports', label: 'Reports', description: 'Review executive briefings and downloadable outputs', icon: FileText },
   { path: '/agents', label: 'AI Copilot', description: 'Inspect the AI workflow and operating context', icon: Bot },
 ];
 
 export const workspaceOptions = [
-  { id: 'enterprise', label: 'Enterprise Workspace', description: 'Primary threat intelligence workspace' },
-  { id: 'board', label: 'Executive Briefing', description: 'C-suite reporting and breach-readiness review' },
-  { id: 'controls', label: 'Controls Review', description: 'Vulnerability surface and defensive control analysis' },
+  { id: 'enterprise', label: 'Enterprise Workspace', description: 'Primary compliance intelligence workspace' },
+  { id: 'board', label: 'Executive Briefing', description: 'C-suite reporting and audit-readiness review' },
+  { id: 'controls', label: 'Controls Review', description: 'Clause coverage and compliance control analysis' },
 ];
 
 export const footerLinkGroups = [
@@ -86,7 +86,7 @@ export const footerLinkGroups = [
     label: 'Product',
     links: [
       { label: 'Platform', href: '/dashboard', type: 'route' as const },
-      { label: 'Scan Modules', href: '/#modules', type: 'anchor' as const },
+      { label: 'Standards', href: '/#modules', type: 'anchor' as const },
       { label: 'How It Works', href: '/#how-it-works', type: 'anchor' as const },
       { label: 'Security', href: '/settings', type: 'route' as const },
     ],

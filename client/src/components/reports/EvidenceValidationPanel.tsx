@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ShieldCheck, AlertTriangle, XCircle, MinusCircle, ChevronDown, ChevronRight, ArrowRightLeft } from 'lucide-react';
-import { SectionHeader } from '../ui/EnterpriseComponents';
 import type { EvidenceValidation, EvidenceValidationItem } from '../../types';
 
 const validationColors: Record<string, { bg: string; color: string; label: string; icon: typeof ShieldCheck }> = {

@@ -5,7 +5,7 @@
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)
 ![React](https://img.shields.io/badge/React-19-61dafb)
-![Groq](https://img.shields.io/badge/Groq-openai%2Fgpt--oss--120b-orange)
+![Claude](https://img.shields.io/badge/Claude-sonnet--5%20%7C%20fable--5-orange)
 ![Express](https://img.shields.io/badge/Express-5-green)
 ![License](https://img.shields.io/badge/License-Proprietary-red)
 
@@ -38,7 +38,7 @@ SentriX is a **production-grade enterprise application** that transforms how org
 ### Prerequisites
 
 - **Node.js** 18+ and **npm** 9+
-- **Groq API key** (optional — demo mode works without it)
+- **Anthropic API key** (optional — demo mode works without it)
 - **Python 3.9+** (optional — for ML scoring)
 - **PostgreSQL 14+** (optional — for persisted assessment sessions/results)
 
@@ -48,7 +48,7 @@ SentriX is a **production-grade enterprise application** that transforms how org
 # Server
 cd server
 npm install
-cp .env.example .env          # Add your GROQ_API_KEY and optional DATABASE_URL
+cp .env.example .env          # Add your ANTHROPIC_API_KEY and optional DATABASE_URL
 npm run dev                    # → http://localhost:3001
 
 # Client (separate terminal)
@@ -84,8 +84,8 @@ Click **"Try Demo"** in the navbar to load a complete sample assessment with all
 | Layer | Technologies |
 |-------|-------------|
 | **Frontend** | React 19, TypeScript, Vite 6, Tailwind CSS 4, Framer Motion, Recharts, Zustand, React Router 7 |
-| **Backend** | Express 5, TypeScript, Groq SDK, pg, pdf-parse, mammoth, Multer, SSE |
-| **AI/ML** | Groq Cloud (`openai/gpt-oss-120b`), sentence-transformers (Python), OmniAgent platform |
+| **Backend** | Express 5, TypeScript, Anthropic SDK, Groq SDK, pg, pdf-parse, mammoth, Multer, SSE |
+| **AI/ML** | Anthropic Claude (`claude-sonnet-5`, `claude-fable-5`), Groq Cloud (`openai/gpt-oss-120b`), sentence-transformers (Python), OmniAgent platform |
 | **Tooling** | ESLint, tsx (watch mode), jsPDF, D3, Fuse.js |
 
 ---
@@ -95,15 +95,15 @@ Click **"Try Demo"** in the navbar to load a complete sample assessment with all
 ```
 Client (React)  ──HTTP/SSE──▶  Express API  ──▶  AI Pipeline (7 agents)
                                     │                    │
-                                    ├──▶ Groq Cloud      ├──▶ Document Parsing
-                                    ├──▶ OmniAgent         ├──▶ Standard Scoring (×4)
-                                    └──▶ Python ML       ├──▶ Gap Analysis
-                                                         ├──▶ Evidence Validation
+                                    ├──▶ Claude API      ├──▶ Document Parsing
+                                    ├──▶ Groq Cloud      ├──▶ Standard Scoring (×4)
+                                    ├──▶ OmniAgent       ├──▶ Gap Analysis
+                                    └──▶ Python ML       ├──▶ Evidence Validation
                                                          ├──▶ Remediation Planning
                                                          └──▶ Policy Generation
 ```
 
-The pipeline uses a **3-tier provider cascade** — OmniAgent → Groq Cloud → local generation — so every agent produces results regardless of external service availability.
+The pipeline uses a **3-tier provider cascade** — OmniAgent → Anthropic Claude → local generation — so every agent produces results regardless of external service availability.
 
 ---
 

@@ -1,4 +1,4 @@
-import Groq from 'groq-sdk';
+import Anthropic from '@anthropic-ai/sdk';
 import {
   complianceKeywordTaxonomy,
   compliancePhrases,
@@ -19,12 +19,217 @@ import {
   governanceStandards,
 } from '../data/isoQuestionnaires';
 
-const GROQ_MODEL = 'openai/gpt-oss-120b';
+const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5';
+const COMPLEX_MODEL = process.env.ANTHROPIC_COMPLEX_MODEL || 'claude-fable-5';
+const FALLBACK_MODEL = 'claude-opus-4-8';
 
-const getClient = (): Groq | null => {
-  const apiKey = process.env.GROQ_API_KEY;
+// Multi-phase synthesis stages run on the more capable model.
+const COMPLEX_AGENTS = new Set(['Remediation Agent', 'Policy Generator Agent']);
+
+const getClient = (): Anthropic | null => {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return null;
-  return new Groq({ apiKey });
+  return new Anthropic({ apiKey });
+};
+
+type JsonSchema = Record<string, unknown>;
+
+// Structured-output schemas per normalized agent name. These mirror the JSON
+// contracts documented in each prompt builder below and the types consumed by
+// CompliancePipelineService, so the API guarantees parseable output.
+const agentOutputSchemas: Record<string, JsonSchema> = {
+  'Document Agent': {
+    type: 'object',
+    properties: {
+      sections: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            title: { type: 'string' },
+            content: { type: 'string' },
+            relevantStandards: { type: 'array', items: { type: 'string' } },
+            mandatoryObligations: { type: 'integer' },
+            evidenceQuality: { type: 'string', enum: ['direct', 'indirect', 'anecdotal', 'none'] },
+          },
+          required: ['title', 'content', 'relevantStandards', 'mandatoryObligations', 'evidenceQuality'],
+          additionalProperties: false,
+        },
+      },
+      controlsIdentified: { type: 'integer' },
+      legalFrameworksCovered: { type: 'array', items: { type: 'string' } },
+      summary: { type: 'string' },
+    },
+    required: ['sections', 'controlsIdentified', 'legalFrameworksCovered', 'summary'],
+    additionalProperties: false,
+  },
+  'Evidence Validation Agent': {
+    type: 'object',
+    properties: {
+      evidenceItems: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            clauseId: { type: 'string' },
+            standardCode: { type: 'string' },
+            evidenceText: { type: 'string' },
+            validationResult: { type: 'string', enum: ['sufficient', 'partial', 'insufficient', 'missing'] },
+            qualityScore: { type: 'integer' },
+            qualityLevel: { type: 'string', enum: ['direct', 'indirect', 'anecdotal', 'none'] },
+            issues: { type: 'array', items: { type: 'string' } },
+            recommendation: { type: 'string' },
+            crossStandardReuse: { type: 'array', items: { type: 'string' } },
+            auditOpinion: { type: 'string' },
+          },
+          required: ['id', 'clauseId', 'standardCode', 'evidenceText', 'validationResult', 'qualityScore', 'qualityLevel', 'issues', 'recommendation', 'crossStandardReuse', 'auditOpinion'],
+          additionalProperties: false,
+        },
+      },
+      overallEvidenceScore: { type: 'integer' },
+      sufficientCount: { type: 'integer' },
+      partialCount: { type: 'integer' },
+      insufficientCount: { type: 'integer' },
+      missingCount: { type: 'integer' },
+      crossStandardOpportunities: { type: 'integer' },
+      summary: { type: 'string' },
+    },
+    required: ['evidenceItems', 'overallEvidenceScore', 'sufficientCount', 'partialCount', 'insufficientCount', 'missingCount', 'crossStandardOpportunities', 'summary'],
+    additionalProperties: false,
+  },
+  'Gap Analysis Agent': {
+    type: 'object',
+    properties: {
+      gaps: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            title: { type: 'string' },
+            severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+            standard: { type: 'string' },
+            clauseRef: { type: 'string' },
+            impactScore: { type: 'integer' },
+            effortScore: { type: 'integer' },
+            legalExposure: { type: 'string' },
+            description: { type: 'string' },
+          },
+          required: ['id', 'title', 'severity', 'standard', 'clauseRef', 'impactScore', 'effortScore', 'legalExposure', 'description'],
+          additionalProperties: false,
+        },
+      },
+      crossStandardOverlaps: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            standards: { type: 'array', items: { type: 'string' } },
+            area: { type: 'string' },
+            savingsPercent: { type: 'integer' },
+          },
+          required: ['standards', 'area', 'savingsPercent'],
+          additionalProperties: false,
+        },
+      },
+      totalMandatoryGaps: { type: 'integer' },
+      summary: { type: 'string' },
+    },
+    required: ['gaps', 'crossStandardOverlaps', 'totalMandatoryGaps', 'summary'],
+    additionalProperties: false,
+  },
+  'Remediation Agent': {
+    type: 'object',
+    properties: {
+      actions: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            title: { type: 'string' },
+            description: { type: 'string' },
+            priority: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+            phase: { type: 'integer', enum: [1, 2, 3] },
+            effortDays: { type: 'integer' },
+            standard: { type: 'string' },
+            clauseRef: { type: 'string' },
+            responsible: { type: 'string' },
+            verificationCriteria: { type: 'string' },
+          },
+          required: ['id', 'title', 'description', 'priority', 'phase', 'effortDays', 'standard', 'clauseRef', 'responsible', 'verificationCriteria'],
+          additionalProperties: false,
+        },
+      },
+      phases: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            phase: { type: 'integer' },
+            name: { type: 'string' },
+            duration: { type: 'string' },
+          },
+          required: ['phase', 'name', 'duration'],
+          additionalProperties: false,
+        },
+      },
+      totalEffortDays: { type: 'integer' },
+      estimatedCostRange: { type: 'string', enum: ['low', 'medium', 'high'] },
+      summary: { type: 'string' },
+    },
+    required: ['actions', 'phases', 'totalEffortDays', 'estimatedCostRange', 'summary'],
+    additionalProperties: false,
+  },
+  'Policy Generator Agent': {
+    type: 'object',
+    properties: {
+      policyDocuments: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            standardCode: { type: 'string' },
+            standardName: { type: 'string' },
+            title: { type: 'string' },
+            version: { type: 'string' },
+            effectiveDate: { type: 'string' },
+            nextReviewDate: { type: 'string' },
+            approvalAuthority: { type: 'string' },
+            classification: { type: 'string' },
+            sections: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  sectionNumber: { type: 'string' },
+                  title: { type: 'string' },
+                  clauseRef: { type: 'string' },
+                  content: { type: 'string' },
+                  status: { type: 'string', enum: ['new', 'revised', 'retained'] },
+                },
+                required: ['sectionNumber', 'title', 'clauseRef', 'content', 'status'],
+                additionalProperties: false,
+              },
+            },
+            complianceScore: { type: 'integer' },
+            gapsAddressed: { type: 'integer' },
+            legislativeReferences: { type: 'array', items: { type: 'string' } },
+            summary: { type: 'string' },
+          },
+          required: ['id', 'standardCode', 'standardName', 'title', 'version', 'effectiveDate', 'nextReviewDate', 'approvalAuthority', 'classification', 'sections', 'complianceScore', 'gapsAddressed', 'legislativeReferences', 'summary'],
+          additionalProperties: false,
+        },
+      },
+      totalPoliciesGenerated: { type: 'integer' },
+      overallComplianceTarget: { type: 'integer' },
+      summary: { type: 'string' },
+    },
+    required: ['policyDocuments', 'totalPoliciesGenerated', 'overallComplianceTarget', 'summary'],
+    additionalProperties: false,
+  },
 };
 
 export interface AgentResult {
@@ -50,6 +255,38 @@ function normalizeAgentName(agentName: string): string {
   return aliases[agentName] || agentName;
 }
 
+async function createClaudeMessage(
+  client: Anthropic,
+  model: string,
+  maxTokens: number,
+  systemPrompt: string,
+  userPrompt: string,
+  schema?: JsonSchema,
+): Promise<Anthropic.Message | Anthropic.Beta.BetaMessage> {
+  const params = {
+    model,
+    max_tokens: maxTokens,
+    thinking: { type: 'adaptive' as const },
+    system: systemPrompt,
+    messages: [{ role: 'user' as const, content: userPrompt }],
+    ...(schema
+      ? { output_config: { format: { type: 'json_schema' as const, schema } } }
+      : {}),
+  };
+
+  if (model.startsWith('claude-fable')) {
+    // Fable 5 safety classifiers can decline a request with stop_reason
+    // "refusal"; the server-side fallback re-runs it on Opus in the same call.
+    return client.beta.messages.create({
+      ...params,
+      betas: ['server-side-fallback-2026-06-01'],
+      fallbacks: [{ model: FALLBACK_MODEL }],
+    });
+  }
+
+  return client.messages.create(params);
+}
+
 export async function runAgent(
   agentName: string,
   systemPrompt: string,
@@ -60,33 +297,47 @@ export async function runAgent(
 
   const client = getClient();
   if (!client) {
-    onLog?.(`[${agentName}] No Groq API key — using intelligent local analysis.`);
+    onLog?.(`[${agentName}] No Anthropic API key — using intelligent local analysis.`);
     return generateIntelligentFallback(agentName, userPrompt);
   }
 
-  try {
-    const response = await client.chat.completions.create({
-      model: GROQ_MODEL,
-      max_tokens: 8192,
-      temperature: 0.3,
-      top_p: 1,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-    });
+  const normalizedName = normalizeAgentName(agentName);
+  const isComplex = COMPLEX_AGENTS.has(normalizedName);
+  const model = isComplex ? COMPLEX_MODEL : DEFAULT_MODEL;
+  const maxTokens = isComplex ? 16000 : 8192;
+  const schema = agentOutputSchemas[normalizedName];
 
-    const text = response.choices?.[0]?.message?.content || '';
+  try {
+    onLog?.(`[${agentName}] Running on ${model}...`);
+    const response = await createClaudeMessage(client, model, maxTokens, systemPrompt, userPrompt, schema);
+
+    if (response.stop_reason === 'refusal') {
+      onLog?.(`[${agentName}] Claude declined the request, using intelligent local analysis.`);
+      return generateIntelligentFallback(agentName, userPrompt);
+    }
+
+    let text = '';
+    for (const block of response.content) {
+      if (block.type === 'text') text += block.text;
+    }
 
     if (!text) {
-      onLog?.(`[${agentName}] Empty response from Groq, using intelligent local analysis.`);
+      onLog?.(`[${agentName}] Empty response from Claude, using intelligent local analysis.`);
       return generateIntelligentFallback(agentName, userPrompt);
     }
 
     onLog?.(`[${agentName}] Analysis complete.`);
     return text;
   } catch (error) {
-    onLog?.(`[${agentName}] API error, using intelligent local analysis: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    if (error instanceof Anthropic.RateLimitError) {
+      onLog?.(`[${agentName}] Claude rate limited, using intelligent local analysis.`);
+    } else if (error instanceof Anthropic.APIConnectionError) {
+      onLog?.(`[${agentName}] Cannot reach the Anthropic API, using intelligent local analysis: ${error.message}`);
+    } else if (error instanceof Anthropic.APIError) {
+      onLog?.(`[${agentName}] Claude API error ${error.status ?? ''}, using intelligent local analysis: ${error.message}`);
+    } else {
+      onLog?.(`[${agentName}] API error, using intelligent local analysis: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
     return generateIntelligentFallback(agentName, userPrompt);
   }
 }

@@ -42,14 +42,14 @@ export default function SidebarNav({ mobileOpen = false, isMobile = false, onClo
 
         {!collapsed && (
           <div className="sidebar-overview-card">
-            <div className="sidebar-overview-eyebrow">Threat Intelligence Hub</div>
-            <div className="sidebar-overview-title">Attack surface at a glance</div>
+            <div className="sidebar-overview-eyebrow">Compliance Intelligence Hub</div>
+            <div className="sidebar-overview-title">Readiness at a glance</div>
             <div className="sidebar-overview-copy">
-              Navigate scan modules, OSINT pipelines, and remediation outputs from one unified workspace.
+              Navigate standards, assessment pipelines, and remediation outputs from one unified workspace.
             </div>
             <div className="sidebar-overview-chip">
               <Sparkles size={14} />
-              <span>{standardCount || 0} modules in scope</span>
+              <span>{standardCount || 0} standards in scope</span>
             </div>
           </div>
         )}

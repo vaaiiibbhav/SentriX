@@ -263,10 +263,6 @@ export function buildComplianceReadinessForecast(
     const projectedScore = Math.round(
       standardProgress.reduce((sum, standard) => sum + standard.projected, 0) / Math.max(1, standardProgress.length)
     );
-    const linkedGapCount = phaseActions.reduce((sum, action) => {
-      const matching = actionsWithLinks.find((entry) => entry.action.id === action.id);
-      return sum + (matching ? matching.linkedGapIds.filter((gapId) => selectedGapSet.has(gapId)).length : 0);
-    }, 0);
     const uncoveredGapCount = cumulativeGapIds.filter((gapId) => {
       return !actionsWithLinks.some(({ linkedGapIds }) => linkedGapIds.includes(gapId));
     }).length;

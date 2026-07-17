@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import { standardsApi } from '../utils/apiClient';
@@ -50,15 +50,14 @@ export default function ControlLibrary() {
   const visibleControls = controls.filter((controlSet) => selected === 'ALL' || controlSet.code === selected);
   const totalControls = visibleControls.reduce((count, controlSet) => count + controlSet.clauses.length, 0);
   const weakestStandard = [...currentAssessment.standards].sort((left, right) => left.overallScore - right.overallScore)[0];
-  const categoryCounts = useMemo(
-    () => Array.from(new Set(visibleControls.flatMap((controlSet) => controlSet.clauses.map((clause) => clause.category))))
-      .map((category) => ({
-        category,
-        count: visibleControls.reduce((sum, controlSet) => sum + controlSet.clauses.filter((clause) => clause.category === category).length, 0),
-      }))
-      .sort((left, right) => right.count - left.count),
-    [visibleControls]
-  );
+  // Plain derivation (not useMemo): this sits below an early return, and a
+  // conditional hook crashes React when the assessment loads while mounted.
+  const categoryCounts = Array.from(new Set(visibleControls.flatMap((controlSet) => controlSet.clauses.map((clause) => clause.category))))
+    .map((category) => ({
+      category,
+      count: visibleControls.reduce((sum, controlSet) => sum + controlSet.clauses.filter((clause) => clause.category === category).length, 0),
+    }))
+    .sort((left, right) => right.count - left.count);
 
   return (
     <div className="page-stack">

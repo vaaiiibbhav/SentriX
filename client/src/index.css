@@ -5428,3 +5428,71 @@ textarea:focus-visible {
     gap: 10px;
   }
 }
+
+/* ─── Micro-interactions & polish (UI/UX enhancement pass) ─────────────── */
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--teal, #0d9488);
+  outline-offset: 2px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--teal, #0d9488);
+  color: var(--slate-900);
+  background: var(--slate-50, #f8fafc);
+}
+
+.metric-card {
+  transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.metric-card:hover {
+  box-shadow: 0 18px 38px rgba(20, 32, 51, 0.1);
+  border-color: rgba(37, 99, 235, 0.22);
+}
+
+.analytics-panel {
+  transition: box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.analytics-panel:hover {
+  box-shadow: 0 16px 36px rgba(20, 32, 51, 0.08);
+}
+
+.top-navbar-icon-button,
+.top-navbar-copilot-button,
+.public-footer-icon-button,
+.sidebar-collapse-button {
+  transition: transform 150ms ease, background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+
+.top-navbar-icon-button:active,
+.top-navbar-copilot-button:active,
+.public-footer-icon-button:active,
+.sidebar-collapse-button:active {
+  transform: scale(0.92);
+}
+
+.landing-creator-tag {
+  transition: transform 150ms ease, border-color 150ms ease;
+}
+
+.landing-creator-tag:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:active:not(:disabled),
+  .top-navbar-icon-button:active,
+  .top-navbar-copilot-button:active,
+  .public-footer-icon-button:active,
+  .sidebar-collapse-button:active,
+  .landing-creator-tag:hover {
+    transform: none;
+  }
+}

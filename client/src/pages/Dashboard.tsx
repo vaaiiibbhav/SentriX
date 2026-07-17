@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Shield, AlertTriangle, CalendarDays, FileCheck,
-  ArrowRight, Upload, BarChart3, ChevronRight, Target, ShieldAlert,
-} from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import {
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
   Legend, ResponsiveContainer, Tooltip,
@@ -11,7 +8,6 @@ import {
 import ComplianceScoreRing from '../components/dashboard/ComplianceScoreRing';
 import ClauseHeatmap from '../components/analytics/ClauseHeatmap';
 import ComplianceReadinessTimeline from '../components/analytics/ComplianceReadinessTimeline';
-import RemediationTimeline from '../components/reports/RemediationTimeline';
 import GapPriorityMatrix from '../components/analytics/GapPriorityMatrix';
 import OrganizationalRiskHeatmap from '../components/analytics/OrganizationalRiskHeatmap';
 import EvidenceValidationPanel from '../components/reports/EvidenceValidationPanel';
@@ -48,11 +44,11 @@ function EmptyDashboard() {
     <div className="page-stack">
       <PageHero
         eyebrow="Enterprise workspace"
-        title="Threat intelligence command center"
-        description="Run a scan to populate exposure metrics, OSINT findings, vulnerability clusters, and remediation priorities in a single unified workspace."
+        title="Compliance intelligence command center"
+        description="Run an assessment to populate readiness metrics, clause findings, gap clusters, and remediation priorities in a single unified workspace."
         actions={
           <>
-            <button onClick={() => navigate('/assessment')} className="btn btn-primary">Start scan pipeline</button>
+            <button onClick={() => navigate('/assessment')} className="btn btn-primary">Start assessment pipeline</button>
             <button onClick={loadDemoData} className="btn btn-secondary">Load demo dataset</button>
           </>
         }
@@ -60,21 +56,21 @@ function EmptyDashboard() {
           <div className="hero-stat-stack">
             <div className="hero-stat-label">Platform mode</div>
             <div className="hero-stat-value">Ready</div>
-            <div className="hero-stat-copy">Connect assets and the analytics workspace will populate with exposure scores, CVE clusters, and OSINT signals.</div>
+            <div className="hero-stat-copy">Upload documents and the analytics workspace will populate with readiness scores, clause heatmaps, and gap intelligence.</div>
           </div>
         }
       />
 
       <div className="metric-grid">
-        <MetricCard label="Overall score" value="-" caption="Awaiting first scan" tone="brand" />
-        <MetricCard label="Scanned surfaces" value="0" caption="No active modules selected" />
-        <MetricCard label="Critical findings" value="0" caption="No CVEs on record yet" />
+        <MetricCard label="Overall score" value="-" caption="Awaiting first assessment" tone="brand" />
+        <MetricCard label="Standards assessed" value="0" caption="No active standards selected" />
+        <MetricCard label="Critical findings" value="0" caption="No gaps on record yet" />
         <MetricCard label="Report pack" value="Idle" caption="Executive briefing appears after analysis" />
       </div>
 
       <EmptyWorkspace
-        title="No scan data yet"
-        description="This dashboard is designed for security leadership. Once a scan runs, it will show clear exposure scores, CVE clusters, OSINT findings, and recommended remediation actions."
+        title="No assessment data yet"
+        description="This dashboard is designed for compliance leadership. Once an assessment runs, it will show clear readiness scores, clause heatmaps, evidence findings, and recommended remediation actions."
       />
     </div>
   );

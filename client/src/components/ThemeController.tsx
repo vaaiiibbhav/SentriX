@@ -3,7 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 
 function resolveTheme(mode: 'light' | 'dark' | 'system', prefersDark: boolean) {
   if (mode === 'system') {
-    return 'light';
+    return prefersDark ? 'dark' : 'light';
   }
 
   return mode;

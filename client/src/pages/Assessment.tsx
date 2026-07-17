@@ -19,7 +19,7 @@ import { demoAssessmentResult } from '../data/demo-data';
 import { useAssessmentStream } from '../hooks/useAssessmentStream';
 import { assessmentApi } from '../utils/apiClient';
 import { adaptAssessmentResult } from '../utils/assessmentAdapter';
-import type { AssessmentResult, OrgProfile, StandardCode, UploadedDocumentInfo } from '../types';
+import type { AssessmentResult, BackendAssessmentResult, OrgProfile, StandardCode, UploadedDocumentInfo } from '../types';
 import { MetricCard, PageHero, Panel } from '../components/ui/EnterpriseLayout';
 import { ActionCard, InsightCard, SummaryStatCard, WorkflowStage } from '../components/ui/EnterpriseComponents';
 
@@ -244,7 +244,7 @@ export default function Assessment() {
             }
           },
           (result, sessionId) => {
-            const normalizedResult = adaptAssessmentResult(result, {
+            const normalizedResult = adaptAssessmentResult(result as BackendAssessmentResult, {
               sessionId: sessionId || response.assessmentId,
               uploadedDocuments,
             });
@@ -314,9 +314,9 @@ export default function Assessment() {
   return (
     <div className="assessment-shell">
       <PageHero
-        eyebrow="Scan pipeline"
-        title="Run an AI-led multi-agent vulnerability scan"
-        description="Capture asset context, attach OSINT seeds and infrastructure targets, choose scan modules, and launch the multi-agent pipeline that scores exposure and generates remediation output."
+        eyebrow="Assessment pipeline"
+        title="Run an AI-led multi-agent compliance assessment"
+        description="Capture organization context, attach policy documents and evidence packs, choose ISO standards, and launch the Claude-powered multi-agent pipeline that scores readiness and generates remediation output."
         actions={(
           <>
             <button className="btn btn-secondary" onClick={() => navigate('/knowledge-base')}>Review knowledge base</button>
@@ -686,7 +686,7 @@ export default function Assessment() {
               <ActionCard
                 label="Context"
                 title={isDemoMode ? 'Demo orchestration' : 'Live backend orchestration'}
-                description="The workflow reuses uploaded evidence, organization profile data, and the selected standards pack to build an auditable assessment result."
+                description="The Claude 5th-Gen Agentic Engine (Sonnet 5 for analysis, Fable 5 for synthesis) reuses uploaded evidence, organization profile data, and the selected standards pack to build an auditable assessment result."
               />
               <ActionCard
                 label="Output"

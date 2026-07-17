@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Info, Key, Palette, Monitor, Moon, Sun } from 'lucide-react';
+import { Info, Palette, Monitor, Moon, Sun } from 'lucide-react';
 import { PageHero, Panel } from '../components/ui/EnterpriseLayout';
 import { useAppStore } from '../store/useAppStore';
 
@@ -75,8 +75,8 @@ export default function Settings() {
           <Panel label="Integrations" title="API configuration" description="Integration keys remain local to this workspace and are not transmitted until you save them to the backend.">
             <div className="page-stack" style={{ gap: 16 }}>
               <div>
-                <label className="form-label">Groq API Key</label>
-                <input type="password" placeholder="gsk_..." className="form-input" />
+                <label className="form-label">Anthropic API Key</label>
+                <input type="password" placeholder="sk-ant-..." className="form-input" />
               </div>
               <div>
                 <label className="form-label">OmniAgent Endpoint</label>
@@ -111,8 +111,8 @@ export default function Settings() {
               <div className="insight-row">
                 <div className="insight-kicker"><Info size={14} /></div>
                 <div>
-                  <div className="insight-title">Version 1.0.0</div>
-                  <div className="insight-copy">AI model: openai/gpt-oss-120b · Platform: Enterprise Core OmniAgent™ · Built for Hackathon 2026.</div>
+                  <div className="insight-title">Version 2.0.0</div>
+                  <div className="insight-copy">AI engine: Claude 5th-Gen Agentic Engine (Claude Sonnet 5 · Claude Fable 5) · Platform: Enterprise Core OmniAgent™ · Engineered by Vaibhav Verma for Hackathon 2026.</div>
                 </div>
               </div>
             </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileText, ChevronRight, Shield, AlertTriangle } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
-import type { ClauseScore, StandardAssessment } from '../types';
+import type { ClauseScore } from '../types';
 
 function getScoreColor(score: number): string {
   if (score >= 75) return 'var(--color-accent-500)';
